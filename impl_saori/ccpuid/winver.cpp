@@ -42,6 +42,127 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 //		_tcscpy(osname, TEXT("Microsoft "));
 
 		// Test for the specific product.
+		if ( osvi.dwMajorVersion == 10 )
+		{
+			pGPI = (PGPI) GetProcAddress(
+				GetModuleHandle(TEXT("kernel32.dll")), 
+				"GetProductInfo");
+
+			pGPI( osvi.dwMajorVersion, osvi.dwMinorVersion, 0, 0, &dwType);
+
+			if( osvi.dwMinorVersion == 0 )
+			{
+				char edition[64];
+
+				if( osvi.wProductType == VER_NT_WORKSTATION )
+				{
+					switch( dwType )
+					{
+						case PRODUCT_PROFESSIONAL:
+						case PRODUCT_PROFESSIONAL_N:
+							_tcscpy(edition, TEXT("Pro"));
+							break;
+						case PRODUCT_ENTERPRISE:
+						case PRODUCT_ENTERPRISE_E:
+						case PRODUCT_ENTERPRISE_N:
+							_tcscpy(edition, TEXT("Enterprise"));
+							break;
+						case PRODUCT_CORE:
+						case PRODUCT_CORE_N:
+						case PRODUCT_CORE_SINGLELANGUAGE:
+							_tcscpy(edition, TEXT("Home"));
+							break;
+						case PRODUCT_EDUCATION:
+						case PRODUCT_EDUCATION_N:
+							_tcscpy(edition, TEXT("Education"));
+							break;
+						case PRODUCT_PRO_WORKSTATION:
+						case PRODUCT_PRO_WORKSTATION_N:
+							_tcscpy(edition, TEXT("Pro For Workstations"));
+							break;
+						case PRODUCT_MOBILE_CORE:
+							_tcscpy(edition, TEXT("Mobile"));
+							break;
+						case PRODUCT_MOBILE_ENTERPRISE:
+							_tcscpy(edition, TEXT("Mobile Enterprise"));
+							break;
+						case PRODUCT_IOTUAP:
+							_tcscpy(edition, TEXT("IoT Core"));
+							break;
+						case PRODUCT_IOTENTERPRISE:
+							_tcscpy(edition, TEXT("IoT Enterprise"));
+							break;
+					}
+
+					switch(osvi.dwBuildNumber)
+					{
+					case 22621:
+						_stprintf(osname, TEXT("Windows 11 %s 22H2"), edition);
+						break;
+					case 22000:
+						_stprintf(osname, TEXT("Windows 11 %s 21H2"), edition);
+						break;
+					case 19045:
+						_stprintf(osname, TEXT("Windows 10 %s 22H2"), edition);
+						break;
+					case 19044:
+						_stprintf(osname, TEXT("Windows 10 %s 21H2"), edition);
+						break;
+					case 19043:
+						_stprintf(osname, TEXT("Windows 10 %s 21H1"), edition);
+						break;
+					case 19042:
+						_stprintf(osname, TEXT("Windows 10 %s 20H2"), edition);
+						break;
+					case 19041:
+						_stprintf(osname, TEXT("Windows 10 %s 2004"), edition);
+						break;
+					case 18363:
+						_stprintf(osname, TEXT("Windows 10 %s 1909"), edition);
+						break;
+					case 18362:
+						_stprintf(osname, TEXT("Windows 10 %s 1903"), edition);
+						break;
+					case 17763:
+						_stprintf(osname, TEXT("Windows 10 %s 1809"), edition);
+						break;
+					case 17134:
+						_stprintf(osname, TEXT("Windows 10 %s 1803"), edition);
+						break;
+					case 16299:
+						_stprintf(osname, TEXT("Windows 10 %s 1709"), edition);
+						break;
+					case 15063:
+						_stprintf(osname, TEXT("Windows 10 %s 1703"), edition);
+						break;
+					case 14393:
+						_stprintf(osname, TEXT("Windows 10 %s 1607"), edition);
+						break;
+					case 10586:
+						_stprintf(osname, TEXT("Windows 10 %s 1511"), edition);
+						break;
+					case 10240:
+						_stprintf(osname, TEXT("Windows 10 %s 1507"), edition);
+						break;
+					}
+				}
+				else
+				{
+					switch(osvi.dwBuildNumber)
+					{
+					case 20348:
+						_stprintf(osname, TEXT("Windows Server 2022"));
+						break;
+					case 17763:
+						_stprintf(osname, TEXT("Windows Server 2019"));
+						break;
+					case 14393:
+						_stprintf(osname, TEXT("Windows Server 2016"));
+						break;
+					}
+				}
+			}
+		}
 
 		if ( osvi.dwMajorVersion == 6 )
 		{
@@ -59,9 +180,15 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 			}
 			else if ( osvi.dwMinorVersion == 2 )
 			{
-				//if( osvi.wProductType == VER_NT_WORKSTATION )
+				if( osvi.wProductType == VER_NT_WORKSTATION )
 					 _tcscat(osname, TEXT("Windows 8 "));
-				//else _tcscat(osname, TEXT("Windows Server 2008 R2 " ));
+				else _tcscat(osname, TEXT("Windows Server 2012 "));
+			}
+			else if ( osvi.dwMinorVersion == 3 )
+			{
+				if( osvi.wProductType == VER_NT_WORKSTATION )
+					 _tcscat(osname, TEXT("Windows 8.1 "));
+				else _tcscat(osname, TEXT("Windows Server 2012 R2 "));
 			}
 			
 			pGPI = (PGPI) GetProcAddress(
