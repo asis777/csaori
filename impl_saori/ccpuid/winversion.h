@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #define BUFSIZE 256
+#undef PRODUCT_BUSINESS
 
 #ifndef PRODUCT_BUSINESS
 #define PRODUCT_ULTIMATE                            0x00000001
@@ -78,6 +79,35 @@
 #define PRODUCT_PROFESSIONAL_E                      0x00000045
 #define PRODUCT_ENTERPRISE_E                        0x00000046
 #define PRODUCT_ULTIMATE_E                          0x00000047
+#define PRODUCT_ENTERPRISE_EVALUATION               0x00000048
+#define PRODUCT_MULTIPOINT_STANDARD_SERVER          0x0000004C
+#define PRODUCT_MULTIPOINT_PREMIUM_SERVER           0x0000004D
+#define PRODUCT_STANDARD_EVALUATION_SERVER          0x0000004F
+#define PRODUCT_DATACENTER_EVALUATION_SERVER        0x00000050
+#define PRODUCT_ENTERPRISE_N_EVALUATION             0x00000054
+#define PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER 0x0000005F
+#define PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER  0x00000060
+#define PRODUCT_CORE_N                              0x00000062
+#define PRODUCT_CORE_COUNTRYSPECIFIC                0x00000063
+#define PRODUCT_CORE_SINGLELANGUAGE                 0x00000064
+#define PRODUCT_CORE                                0x00000065
+#define PRODUCT_PROFESSIONAL_WMC                    0x00000067
+#define PRODUCT_MOBILE_CORE                         0x00000068
+#define PRODUCT_EDUCATION                           0x00000079
+#define PRODUCT_EDUCATION_N                         0x0000007A
+#define PRODUCT_IOTUAP                              0x0000007B
+#define PRODUCT_ENTERPRISE_S                        0x0000007D
+#define PRODUCT_ENTERPRISE_S_N                      0x0000007E
+#define PRODUCT_ENTERPRISE_S_EVALUATION             0x00000081
+#define PRODUCT_ENTERPRISE_S_N_EVALUATION           0x00000082
+#define PRODUCT_IOTUAPCOMMERCIAL                    0x00000083
+#define PRODUCT_MOBILE_ENTERPRISE                   0x00000085
+#define PRODUCT_DATACENTER_A_SERVER_CORE            0x00000091
+#define PRODUCT_STANDARD_A_SERVER_CORE              0x00000092
+#define PRODUCT_PRO_WORKSTATION                     0x000000A1
+#define PRODUCT_PRO_WORKSTATION_N                   0x000000A2
+#define PRODUCT_IOTENTERPRISE                       0x000000BC
+#define PRODUCT_IOTENTERPRISE_S                     0x000000BF
 #endif
 
 #ifndef VER_SUITE_COMPUTE_SERVER
