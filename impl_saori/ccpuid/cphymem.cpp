@@ -219,7 +219,7 @@ CPhyMem::CPhyMem()
 		{
 			type[0]=(PBYTE)buf+(*tableaddress-0x000d0000);
 			PBYTE p=type[0]+*(type[0]+1);
-			for(i=1;i<4;i++)
+			for(int i=1;i<4;i++)
 			{
 				while(1) 
 				{
