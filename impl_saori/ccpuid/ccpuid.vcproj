@@ -191,6 +191,9 @@
 				RelativePath="..\..\csaori_base.cpp">
 			</File>
 			<File
+				RelativePath="..\..\csaori_util.cpp">
+			</File>
+			<File
 				RelativePath=".\winver.cpp">
 			</File>
 		</Filter>
