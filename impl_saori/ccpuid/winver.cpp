@@ -1,5 +1,9 @@
 #include "winversion.h"
 
+typedef void (WINAPI *RtlGetVersionFunc)(OSVERSIONINFOEXW *);
+
+BOOL GetVersion2(OSVERSIONINFOEX *os);
+
 BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 {
 	OSVERSIONINFOEX osvi;
@@ -15,9 +19,10 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
-	if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) ) {
-//			printf("GetVersionEx failed.\n");
-//		return 1;
+	bOsVersionInfoEx = GetVersion2(&osvi);
+	if (bOsVersionInfoEx == FALSE)
+	{
+		bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO *)&osvi);
 	}
 
 	// Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
@@ -30,7 +35,7 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 	else GetSystemInfo(&si);
 
 
-	if ( VER_PLATFORM_WIN32_NT==osvi.dwPlatformId)
+	if ((bOsVersionInfoEx == TRUE) && ( VER_PLATFORM_WIN32_NT==osvi.dwPlatformId))
 	{
 		*osbuild = osvi.dwBuildNumber;
 		_stprintf( osver,TEXT("%d.%d"), osvi.dwMajorVersion, osvi.dwMinorVersion);
@@ -304,7 +309,7 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 
 		*osbuild = osvi2.dwBuildNumber;
 		_stprintf( osver,TEXT("%d.%d"), osvi2.dwMajorVersion, osvi2.dwMinorVersion);
-
+		
 		if(osvi2.dwPlatformId == 1) { // Win 9x/ME
 //			_tcscpy(osname, TEXT("Microsoft "));
 			if(osvi2.dwMajorVersion == 4) {
@@ -363,6 +368,55 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 		return FALSE;
 	}
 }
+
+// RtlGetVersion‚ÍUnicode”Å‚Ì‚Ý
+BOOL GetVersion2(OSVERSIONINFOEX *os)
+{
+#ifdef UNICODE
+    OSVERSIONINFOEXW *osw = os;
+#else
+    OSVERSIONINFOEXW o;
+    OSVERSIONINFOEXW *osw = &o;
+#endif
+
+    HMODULE hMod = LoadLibrary(TEXT("ntdll.dll"));
+    if(!hMod)
+    {
+        return FALSE;
+    }
+
+    RtlGetVersionFunc pRtlGetVersion = (RtlGetVersionFunc)GetProcAddress(hMod, "RtlGetVersion");
+    if(pRtlGetVersion == 0)
+    {
+        FreeLibrary(hMod);
+        return FALSE;
+    }
+
+    ZeroMemory(osw,sizeof(*osw));
+    osw->dwOSVersionInfoSize = sizeof(*osw);
+    pRtlGetVersion(osw);
+#ifndef UNICODE
+    os->dwOSVersionInfoSize = sizeof(*os);
+    os->dwMajorVersion    = osw->dwMajorVersion;
+    os->dwMinorVersion    = osw->dwMinorVersion;
+    os->dwBuildNumber     = osw->dwBuildNumber;
+    os->dwPlatformId      = osw->dwPlatformId;
+    os->wServicePackMajor = osw->wServicePackMajor;
+    os->wServicePackMinor = osw->wServicePackMinor;
+    os->wSuiteMask        = osw->wSuiteMask;
+    os->wProductType      = osw->wProductType;
+
+	size_t num;
+	wcstombs_s(&num,
+		os->szCSDVersion,  sizeof(os->szCSDVersion),
+		osw->szCSDVersion, sizeof(osw->szCSDVersion));
+#endif
+
+    FreeLibrary(hMod);
+
+    return TRUE;
+}
+
 
 /*
 int __cdecl _tmain()
