@@ -3,6 +3,7 @@
 #include "cpuinfo.h"
 #include "cpuusage.h"
 #include "cphymem.h"
+#include <cstdio>
 
 //#include <stdio.h>
 
@@ -267,6 +268,31 @@ bool CSAORI_CPUID::GetInfoFromString(const string_t &in,string_t &out)
 		if (in == L"cpu.sse2") {		// cpu.sse2: If CPU support SSE2
 
 			out = uExt2Flags.iSSE2 ? L"Ready" : L"Not Ready";
+			return true;
+		}
+		if (in == L"cpu.sse3") {		// cpu.sse3: If CPU support SSE3
+
+			out = uExtFlags.iSSE3 ? L"Ready" : L"Not Ready";
+			return true;
+		}
+		if (in == L"cpu.sse4") {		// cpu.sse4: If CPU support SSE4
+
+			out = uExtFlags.iSSE41 ? L"Ready" : L"Not Ready";
+			return true;
+		}
+		if (in == L"cpu.x86-64") {		// cpu.x86-64: If CPU support x86-64
+
+			out = u8Ext2Flags.iLM ? L"Ready" : L"Not Ready";
+			return true;
+		}
+		if (in == L"cpu.vmx") {		// cpu.vmx: If CPU support VT-x
+
+			out = uExtFlags.iVMX ? L"Ready" : L"Not Ready";
+			return true;
+		}
+		if (in == L"cpu.svm") {		// cpu.svm: If CPU support AMD-V
+
+			out = u8ExtFlags.iSVM ? L"Ready" : L"Not Ready";
 			return true;
 		}
 		if (in == L"cpu.tdn") {		// cpu.tdn: If CPU support 3DNow!
