@@ -7,7 +7,6 @@ BOOL GetVersion2(OSVERSIONINFOEX *os);
 BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 {
 	OSVERSIONINFOEX osvi;
-	OSVERSIONINFO osvi2;
 	SYSTEM_INFO si;
 	PGNSI pGNSI;
 	PGPI pGPI;
@@ -303,48 +302,59 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 
 	else
 	{
-		ZeroMemory(&osvi2, sizeof(OSVERSIONINFO));
-		osvi2.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx (&osvi2);
+		if (bOsVersionInfoEx == FALSE)
+		{
+			DWORD dwVersion = GetVersion();
+			osvi.dwMajorVersion = (DWORD)(LOBYTE(LOWORD(dwVersion)));
+			osvi.dwMinorVersion = (DWORD)(HIBYTE(LOWORD(dwVersion)));
 
-		*osbuild = osvi2.dwBuildNumber;
-		_stprintf( osver,TEXT("%d.%d"), osvi2.dwMajorVersion, osvi2.dwMinorVersion);
+			// Get the build number.
+			if (dwVersion < 0x80000000)
+			{
+				osvi.dwBuildNumber = (DWORD)(HIWORD(dwVersion));
+			}
+		}
+
+		*osbuild = osvi.dwBuildNumber;
+		_stprintf( osver,TEXT("%d.%d"), osvi.dwMajorVersion, osvi.dwMinorVersion);
 		
-		if(osvi2.dwPlatformId == 1) { // Win 9x/ME
+		if(osvi.dwPlatformId == 1) { // Win 9x/ME
 //			_tcscpy(osname, TEXT("Microsoft "));
-			if(osvi2.dwMajorVersion == 4) {
-				if(osvi2.dwMinorVersion == 0) {
+			if(osvi.dwMajorVersion == 4) {
+				if(osvi.dwMinorVersion == 0) {
 					_tcscat(osname, TEXT("Windows 95"));
-					if(osvi2.dwBuildNumber > 950 && osvi2.dwBuildNumber < 1080)
+					if(osvi.dwBuildNumber > 950 && osvi.dwBuildNumber < 1080)
 						_tcscat(osname, TEXT(" SP1"));
-					else if(osvi2.dwBuildNumber >= 1080)
+					else if(osvi.dwBuildNumber >= 1080)
 						_tcscat(osname, TEXT(" OSR2"));
+					else if(osvi.dwBuildNumber >= 1212)
+						_tcscat(osname, TEXT(" OSR2.5"));
 				}
-				if(osvi2.dwMinorVersion == 10) {
+				if(osvi.dwMinorVersion == 10) {
 					_tcscat(osname, TEXT("Windows 98"));
-					if(osvi2.dwBuildNumber > 1998 && osvi2.dwBuildNumber < 2183)
+					if(osvi.dwBuildNumber > 1998 && osvi.dwBuildNumber < 2183)
 						_tcscat(osname, TEXT(" SP1"));
-					else if(osvi2.dwBuildNumber > 2183)
+					else if(osvi.dwBuildNumber > 2183)
 						_tcscat(osname, TEXT(" SE"));
 				}
-				if(osvi2.dwMinorVersion == 90) {
+				if(osvi.dwMinorVersion == 90) {
 					_tcscat(osname, TEXT("Windows ME"));
 				}
 			}
 			return TRUE;
 		}
 
-		else if(osvi2.dwPlatformId == 0 || osvi2.dwPlatformId == 2) { // Win NT 3.x / Win32s
+		else if(osvi.dwPlatformId == 0 || osvi.dwPlatformId == 2) { // Win NT 3.x / Win32s
 			_tcscpy(osname, TEXT("Windows "));
-			if(osvi2.dwBuildNumber <= 528) {
+			if(osvi.dwBuildNumber <= 528) {
 				_tcscat(osname, TEXT("NT 3.1"));
 				return TRUE;
 			}
-			else if(osvi2.dwBuildNumber <= 807) {
+			else if(osvi.dwBuildNumber <= 807) {
 				_tcscat(osname, TEXT("NT 3.5"));
 				return TRUE;
 			}
-			else if(osvi2.dwBuildNumber <= 1057) {
+			else if(osvi.dwBuildNumber <= 1057) {
 				_tcscat(osname, TEXT("NT 3.51"));
 				return TRUE;
 			}
@@ -354,7 +364,7 @@ BOOL GetOSDisplayString(LPTSTR osname, LPTSTR osver, DWORD* osbuild)
 			return TRUE;
 		}
 
-		else if(osvi2.dwPlatformId == 3) { // Win CE
+		else if(osvi.dwPlatformId == 3) { // Win CE
 			_tcscpy(osname, TEXT("Windows CE "));
 			TCHAR ver[20];
 
