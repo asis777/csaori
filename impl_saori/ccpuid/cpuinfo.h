@@ -40,7 +40,7 @@ typedef struct CPUID_01_ValuesInECX
 	unsigned int	iTM2        : 1;
 	unsigned int	iSSSE3      : 1;
 	unsigned int	iCID        : 1;
-	unsigned int	Reserved_11 : 1;
+	unsigned int	iSDBG       : 1;
 	unsigned int	i256FMA     : 1;
 	unsigned int	iCHG16B     : 1;
 	unsigned int	ixTPRUpd    : 1;
@@ -58,7 +58,8 @@ typedef struct CPUID_01_ValuesInECX
 	unsigned int	iXSAVE      : 1;
 	unsigned int	iOSXSAVE    : 1;
 	unsigned int	iAVX        : 1;
-	unsigned int	Reserved_28 : 2;
+	unsigned int	iF16C       : 1;
+	unsigned int	iRDRND      : 1;
 	unsigned int	iVirt       : 1;
 } CPUID_01_ECX_t;
 
@@ -99,7 +100,7 @@ typedef struct CPUID_01_ValuesInEDX
 	unsigned int	iSS         : 1;
 	unsigned int	iHTT        : 1;
 	unsigned int	iTM         : 1;
-	unsigned int	Reserved_30 : 1;
+	unsigned int	iIA64       : 1;
 	unsigned int	iPBE        : 1;
 } CPUID_01_EDX_t;
 
